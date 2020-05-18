@@ -225,7 +225,8 @@ class Imapmail(object):
 
         status, ids = self.server.search(None, search)
 
-        ids = ids[0].split(b' ')
+        # ids = ids[0].split(b' ')
+        ids = ids[0].split()
         # print(ids)
         return ids
 
@@ -356,46 +357,36 @@ if __name__ == "__main__":
     imap.sqlite = CONFIG["sqlite"]
     imap.client()
 
-    print(imap.getmaildir())  # 获取邮箱列表
+    #print(imap.getmaildir())  # 获取邮箱列表
 
     def download(num, box):
         # 获取几封邮件
 
-        newnum = []
-        #i = 1
-        #for i in range(num):
-        #    newnum.append(box.pop())
-
-
-        for i, mid in enumerate(box):
-            tmp_num = newnum.append(mid)
-            if i >= num:
-                break
-
-        for mid in reversed(newnum):
-            # print(mid)
+        i = 0
+        for mid in reversed(box):
+            print(mid)
             mailinfo = imap.get_mail_info(mid)
             # print(mailinfo)
 
             # 保存到sqlite
             imap.save_sqlite(mailinfo)
+            i += 1
+            if i >num:
+                break
 
 
     # 一次收取数量
     recv_num = CONFIG["email_num"]
 
-    # 发件箱
-    send_ids = imap.getallmail(mbox_name="Sent Messages", search="ALL")
-    download(recv_num, send_ids)
-
     # 收件箱
     inbox_ids = imap.getallmail()
     download(recv_num, inbox_ids)
 
+    # 发件箱
+    send_ids = imap.getallmail(mbox_name="Sent Messages", search="ALL")
+    #download(len(send_ids), send_ids)
+    download(recv_num, send_ids)
+
+
     # 退出
     imap.logout()
-
-
-
-
-

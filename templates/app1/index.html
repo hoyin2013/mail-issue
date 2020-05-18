@@ -1,0 +1,100 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block header-css %}
+     <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block welcome %}{{ user }} {% endblock %}
+
+{% block content %}
+      <div class="card shadow mb-4">
+{#        <div class="card-header py-3">#}
+{#          <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>#}
+{#        </div>#}
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="10%">邮件ID</th>
+                        <th width="10%">发送时间</th>
+                        <th width="15%">发送人</th>
+                        <th width="35%">主题</th>
+                        <th width="25%">附件</th>
+                        <th width="5%">状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for e in emails %}
+                    <tr class="odd gradeX">
+                        <td>{{ e.id }}</td>
+                        <td>{{ e.send_date }}</td>
+                        <td>{{ e.sender }}</td>
+                        <td class="center">{{ e.subject }}</td>
+                        <td class="center">
+                            {% for attach in e.attachs %}
+                                <a href="{% url 'showsql1' sqltext=attach %} " target="_blank">{{ attach }}</a>
+                            {% endfor %}
+                        </td>
+                        <td class="center">
+                        {% if e.is_execute and e.attachs != '' %}
+                                <span class="badge badge-success">已执行</span>
+                        {% else %}
+                            {% if status %}
+                                <span class="badge badge-warning">已审批</span>
+                            {% else %}
+                                <span class="badge badge-danger">未审批</span>
+                            {% endif %}
+                        {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer-js %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'vendor/Buttons-1.6.1/js/dataTables.buttons.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'vendor/Buttons-1.6.1/js/buttons.bootstrap4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'vendor/Buttons-1.6.1/js/buttons.html5.min.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+	$('#dataTable').DataTable( {
+        order:[[0,'desc']],
+        language:{
+          url:'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json'
+        },
+	    dom: 'Bfrtip',
+	    buttons: [
+	        'csv',
+	        'copy'
+	    ]
+	});
+
+    });
+
+    {# 放在document.readyw外面才能生效 #}
+    function execute(_url) {
+        $.ajax({
+            url: _url,
+            success: function (json) {
+                alert(json['status']);
+                window.location.reload();
+            }
+        })
+    }
+
+    function myrefresh(){
+  	window.location.reload();
+    }
+    setTimeout('myrefresh()',120000); 
+
+</script>
+{% endblock %}

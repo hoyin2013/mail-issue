@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>show sql</title>
+  <style type="text/css" media="screen">
+    body {
+        overflow: hidden;
+    }
+
+    #editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+  </style>
+</head>
+<body>
+
+<pre id="editor">
+{% for s in sql_content %}{{ s }}
+{% endfor %}
+</pre>
+
+<!-- load ace -->
+<script src="{% static 'ace/ace.js' %}"></script>
+<!-- load ace accessibility extension -->
+<script src="{% static 'ace/mode-sql.js' %}"></script>
+<script src="{% static 'ace/theme-textmate.js' %}"></script>
+<script>
+    // trigger extension
+    var editor = ace.edit("editor");
+    editor.session.setMode("ace/mode/sql");
+    editor.setTheme("ace/theme/textmate");
+</script>
+
+</body>
+</html>

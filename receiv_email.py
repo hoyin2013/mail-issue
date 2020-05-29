@@ -12,7 +12,10 @@ import os
 import sys
 import sqlite3
 import logging
+import imaplib
 from config import CONFIG
+
+imaplib._MAXLINE = 1000000
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -32,10 +35,6 @@ fh.setLevel(logging.DEBUG)  # 输出到file的log等级的开关
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 fh.setFormatter(formatter)
 logger.addHandler(fh)
-
-import imaplib
-
-imaplib._MAXLINE = 1000000
 
 
 def decode_str(s):
